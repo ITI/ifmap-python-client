@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.trustedcomputinggroup.org/2010/IFMAP/2/ifmap.wsdl"
+ xmlns:ifmapwsdl="http://www.trustedcomputinggroup.org/2010/IFMAP/2/ifmap.wsdl"
+ xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+ xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+ xmlns:ifmap="http://www.trustedcomputinggroup.org/2010/IFMAP/2"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:import namespace="http://www.trustedcomputinggroup.org/2010/IFMAP/2" schemaLocation="ifmap-base-2.0.xsd"></xsd:import>
+			<xsd:import namespace="http://www.trustedcomputinggroup.org/2010/IFMAP-METADATA/2" schemaLocation="ifmap-metadata-2.0.xsd"></xsd:import>
+		</xsd:schema>
+	</wsdl:types>
+
+    <wsdl:message name="Response">
+        <wsdl:part name="response" element="ifmap:response"></wsdl:part>
+    </wsdl:message>
+   
+    <wsdl:message name="PublishRequest">
+        <wsdl:part name="request" element="ifmap:publish"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="SearchRequest">
+        <wsdl:part name="request" element="ifmap:search"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="SubscribeRequest">
+        <wsdl:part name="request" element="ifmap:subscribe"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="PollRequest">
+        <wsdl:part name="request" element="ifmap:poll"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="PurgePublisherRequest">
+        <wsdl:part name="request" element="ifmap:purgePublisher"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="NewSessionRequest">
+        <wsdl:part name="request" element="ifmap:newSession"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="RenewSessionRequest">
+        <wsdl:part name="request" element="ifmap:renewSession"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="EndSessionRequest">
+        <wsdl:part name="request" element="ifmap:endSession"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:portType name="IfmapPortType">
+        <wsdl:operation name="Publish">
+            <wsdl:input message="ifmapwsdl:PublishRequest"></wsdl:input>
+            <wsdl:output message="ifmapwsdl:Response"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Search">
+            <wsdl:input message="ifmapwsdl:SearchRequest"></wsdl:input>
+            <wsdl:output message="ifmapwsdl:Response"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Subscribe">
+            <wsdl:input message="ifmapwsdl:SubscribeRequest"></wsdl:input>
+            <wsdl:output message="ifmapwsdl:Response"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Poll">
+            <wsdl:input message="ifmapwsdl:PollRequest"></wsdl:input>
+            <wsdl:output message="ifmapwsdl:Response"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="PurgePublisher">
+            <wsdl:input message="ifmapwsdl:PurgePublisherRequest"></wsdl:input>
+            <wsdl:output message="ifmapwsdl:Response"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="NewSession">
+            <wsdl:input message="ifmapwsdl:NewSessionRequest"></wsdl:input>
+            <wsdl:output message="ifmapwsdl:Response"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RenewSession">
+            <wsdl:input message="ifmapwsdl:RenewSessionRequest"></wsdl:input>
+            <wsdl:output message="ifmapwsdl:Response"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="EndSession">
+            <wsdl:input message="ifmapwsdl:EndSessionRequest"></wsdl:input>
+            <wsdl:output message="ifmapwsdl:Response"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="Service" type="ifmapwsdl:IfmapPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="Publish">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Search">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Subscribe">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Poll">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="PurgePublisher">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="NewSession">
+           <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RenewSession">
+           <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="EndSession">
+           <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="IfmapService">
+        <wsdl:documentation>IF-MAP Service</wsdl:documentation>
+        <wsdl:port name="IfmapPort" binding="ifmapwsdl:Service">
+            <soap:address location="https://localhost/dana-ws/soap/dsifmap"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
