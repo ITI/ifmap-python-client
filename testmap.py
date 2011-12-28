@@ -1,11 +1,45 @@
-from ifmap import ifmapClient, IPAddress, ifmapIDFactory, MACAddress, Device, AccessRequest, Identity, CustomIdentity
+from ifmap.client import client, namespaces
+from ifmap.request import NewSessionRequest
+from ifmap.id import IPAddress, MACAddress, Device, AccessRequest, Identity, CustomIdentity
 
 
-client = ifmapClient("https://127.0.0.1:8443", 'test', 'test')
+import logging
 
-client.connect()
+# create logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
-client.publishtest()
+
+publish_blob = """<ifmap:publish session-id=\"%(sessionid)s\"><update lifetime="forever"><identity name="%(username)s" type="username" /><access-request name="111:23" /><metadata><meta:role ifmap-cardinality="multiValue"><name>%(role)s</name></meta:role></metadata></update>
+<update lifetime="forever"><mac-address value="ff:11:22:33:44:55"  /><ip-address value="10.0.0.5"   />
+<metadata><meta:ip-mac  ifmap-cardinality="multiValue" ><start-time >2009-10-27T00:00:00</start-time><end-time >2009-10-28T00:00:00</end-time>
+<dhcp-server >10.0.0.3</dhcp-server></meta:ip-mac></metadata></update>
+<update lifetime="forever"><access-request name="111:23"  /><ip-address value="10.0.0.5"   />
+<metadata><meta:access-request-ip  ifmap-cardinality="singleValue" ></meta:access-request-ip></metadata></update>
+<update lifetime="forever"><access-request name="111:23"  /><metadata><meta:capability  ifmap-cardinality="multiValue" >
+<name >Trusted</name><administrative-domain >Infoblox</administrative-domain></meta:capability></metadata></update>
+<update lifetime="forever"><device><name>123:45</name></device>
+<metadata><meta:device-attribute  ifmap-cardinality="multiValue" ><name >AntiVirusRunning</name></meta:device-attribute></metadata></update>
+</ifmap:publish>"""
+
+
+	#
+	#def test_connect(self):
+	#
+	#	newSessionRequest = '<ifmap:newSession />'
+	#	response = self.call('newSession', newSessionRequest)
+	#	self.__session = {'sessionid': response.newSessionResult['session-id'],
+	#		'publisher_id': response.newSessionResult['ifmap-publisher-id'],
+	#	}
+	#
+	#def test_publish(self):
+	#	username = 'jdoe'
+	#	role = 'employee'
+	#	publish_req = publish_blob % {'sessionid': self.session['sessionid'],'username':username,'role':role, }
+	#	response = self.call('publish', publish_req)
+	#	return response
+
+
 
 print IPAddress("10.0.0.1","IPv4","ifmaplab")
 print IPAddress("10.0.0.1","IPv4",)
@@ -30,30 +64,21 @@ print CustomIdentity("student-id", namespace="http://nsu.example.org/student")
 print CustomIdentity("student-id", attributes={'ID':"1864b64efe4903d7f45b4cdbdad38ab7d828e499", 'serial':"S1223505",})
 print CustomIdentity("student-id", "nsu", "http://nsu.example.org/student", attributes={'ID':"1864b64efe4903d7f45b4cdbdad38ab7d828e499", 'serial':"S1223505",})
 
+print NewSessionRequest('10000')
+print NewSessionRequest()
+
+mapclient = client("https://127.0.0.1:8443", 'test', 'test', namespaces)
+
+method = 'newSession'
+request = NewSessionRequest()
+result = mapclient.call(method, request)
+
+print '==== sent ===='
+print mapclient.last_sent()
+
+print '==== received ===='
+print mapclient.last_received()
+
+print 'test complete'
 
 
-"""
-Test Results
-<ip-address value="10.0.0.1" type="IPv4" administrative-domain="ifmaplab" />
-<ip-address value="10.0.0.1" type="IPv4" />
-<ip-address value="10.0.0.1" />
-<ip-address value="3ffe:1900:4545:3:200:f8ff:fe21:67cf" type="IPv6" administrative-domain="ifmaplab" />
-<ip-address value="3ffe:1900:4545:3:200:f8ff:fe21:67cf" type="IPv6" />
-<ip-address value="3ffe:1900:4545:3:200:f8ff:fe21:67cf" />
-<mac-address value="aa:bb:cc:dd:ee:ff" administrative-domain="ifmaplab" />
-<mac-address value="aa:bb:cc:dd:ee:ff" />
-<device><name>123:45</name></device>
-<device><name>123:45</name><aik-name>aikdummynamef34feccc28b3d44f<aik-name></device>
-<access-request name="111:23" administrative-domain="ifmaplab" />
-<access-request name="111:23" />
-<identity name="john.doe" />
-<identity name="john.doe@example.com" type="email_address" />
-<identity name="ef9b13e5df7dae502c51db7ca4624552" type="other" other-type="RFID" />
-<identity name="ef9b13e5df7dae502c51db7ca4624552" type="other" other-type="RFID" administrative-domain="ifmaplab" />
-<custom-identifier><student-id /></custom-identifier>
-<custom-identifier><nsu:student-id /></custom-identifier>
-<custom-identifier><nsu:student-id xlmns=nsu:http://nsu.example.org/student /></custom-identifier>
-<custom-identifier><student-id xlmns=http://nsu.example.org/student /></custom-identifier>
-<custom-identifier><student-id serial="S1223505" ID="1864b64efe4903d7f45b4cdbdad38ab7d828e499" /></custom-identifier>
-<custom-identifier><nsu:student-id xlmns=nsu:http://nsu.example.org/student serial="S1223505" ID="1864b64efe4903d7f45b4cdbdad38ab7d828e499" /></custom-identifier>
-"""
