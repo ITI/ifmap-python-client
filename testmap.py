@@ -1,4 +1,4 @@
-from ifmap import ifmapClient, IPAddress, ifmapIDFactory, MACAddress, Device, AccessRequest, Identity
+from ifmap import ifmapClient, IPAddress, ifmapIDFactory, MACAddress, Device, AccessRequest, Identity, CustomIdentity
 
 
 client = ifmapClient("https://127.0.0.1:8443", 'test', 'test')
@@ -23,6 +23,13 @@ print Identity("john.doe")
 print Identity("john.doe@example.com", type="email_address")
 print Identity("ef9b13e5df7dae502c51db7ca4624552", type="other", other_type="RFID")
 print Identity("ef9b13e5df7dae502c51db7ca4624552", type="other", other_type="RFID", administrative_domain="ifmaplab")
+print CustomIdentity("student-id")
+print CustomIdentity("student-id", "nsu")
+print CustomIdentity("student-id", "nsu", "http://nsu.example.org/student")
+print CustomIdentity("student-id", namespace="http://nsu.example.org/student")
+print CustomIdentity("student-id", attributes={'ID':"1864b64efe4903d7f45b4cdbdad38ab7d828e499", 'serial':"S1223505",})
+print CustomIdentity("student-id", "nsu", "http://nsu.example.org/student", attributes={'ID':"1864b64efe4903d7f45b4cdbdad38ab7d828e499", 'serial':"S1223505",})
+
 
 
 """
@@ -43,4 +50,10 @@ Test Results
 <identity name="john.doe@example.com" type="email_address" />
 <identity name="ef9b13e5df7dae502c51db7ca4624552" type="other" other-type="RFID" />
 <identity name="ef9b13e5df7dae502c51db7ca4624552" type="other" other-type="RFID" administrative-domain="ifmaplab" />
+<custom-identifier><student-id /></custom-identifier>
+<custom-identifier><nsu:student-id /></custom-identifier>
+<custom-identifier><nsu:student-id xlmns=nsu:http://nsu.example.org/student /></custom-identifier>
+<custom-identifier><student-id xlmns=http://nsu.example.org/student /></custom-identifier>
+<custom-identifier><student-id serial="S1223505" ID="1864b64efe4903d7f45b4cdbdad38ab7d828e499" /></custom-identifier>
+<custom-identifier><nsu:student-id xlmns=nsu:http://nsu.example.org/student serial="S1223505" ID="1864b64efe4903d7f45b4cdbdad38ab7d828e499" /></custom-identifier>
 """

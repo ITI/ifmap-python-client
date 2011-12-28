@@ -231,6 +231,51 @@ class Identity(ifmapIDFactory):
 		self.__XML += " />"
 		return self.__XML
 	
+
+class CustomIdentity(ifmapIDFactory):
+	"""
+	XML Factory for an Custom IF-MAP Identifier with namespace prefix or URL
+	"""
+	
+	def __init__(self, name, ns_prefix="", namespace="", attributes=None):
+		self.__name = name # required
+		self.__ns_prefix = ns_prefix # see ifmap.namespaces
+		self.__namespace = namespace # a namespace IRI/URI
+		self.__attributes = attributes # additional attributes in a dictionary (eg. {key1: value1, key2: value2})
+		return None;
+		
+	def attributes(self):
+		return self.__attributes
+	
+	def name(self):
+		return self.__name
+	
+	def ns_prefix(self):
+		return self.__ns_prefix
+	
+	def namespace(self):
+		return self.__namespace
+	
+	def __str__(self):
+		self.__XML = "<custom-identifier>"
+		
+		
+		if self.__ns_prefix:
+			self.__ns_prefix = self.__ns_prefix +':'
+			
+		self.__XML += '<'+self.__ns_prefix+self.__name
+		
+		if self.__namespace:
+			self.__namespace=' xlmns='+self.__ns_prefix+self.__namespace
+		
+		self.__XML += self.__namespace
+			
+		if self.__attributes and (type(self.__attributes) == type({})) and self.__attributes.items():
+			for key, attribute in self.__attributes.items():
+				self.__XML += ' '+key+'="'+attribute+'"'
+		self.__XML += " /></custom-identifier>"
+		return self.__XML
+	
 if __name__ == "__main__":
 	print """The ifmap client library is not meant to be run from the command line or python interpreter
 - you should use it by including it in your python software. See testmap.py for an example.
