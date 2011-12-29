@@ -1,7 +1,103 @@
-from ifmap.client import client, namespaces
-from ifmap.request import NewSessionRequest
-from ifmap.id import IPAddress, MACAddress, Device, AccessRequest, Identity, CustomIdentity
+"""
+ Script to perform tests on ifmap library
+ 
+>>> 1+1 # make sure at least one test passes
+2
+>>> print attr({'session-id': '2345', 'validation':'metadata', 'empty':''})
+session-id="2345" validation="metadata" 
+>>> print IPAddress("10.0.0.1","IPv4","ifmaplab")
+<ip-address administrative-domain="ifmaplab" type="IPv4" value="10.0.0.1" />
+>>> print IPAddress("10.0.0.1","IPv4",)
+<ip-address type="IPv4" value="10.0.0.1" />
+>>> print IPAddress("10.0.0.1",)
+<ip-address value="10.0.0.1" />
+>>> print IPAddress("3ffe:1900:4545:3:200:f8ff:fe21:67cf","IPv6","ifmaplab")
+<ip-address administrative-domain="ifmaplab" type="IPv6" value="3ffe:1900:4545:3:200:f8ff:fe21:67cf" />
+>>> print IPAddress("3ffe:1900:4545:3:200:f8ff:fe21:67cf","IPv6",)
+<ip-address type="IPv6" value="3ffe:1900:4545:3:200:f8ff:fe21:67cf" />
+>>> print IPAddress("3ffe:1900:4545:3:200:f8ff:fe21:67cf",)
+<ip-address value="3ffe:1900:4545:3:200:f8ff:fe21:67cf" />
+>>> print MACAddress("aa:bb:cc:dd:ee:ff","ifmaplab",)
+<mac-address administrative-domain="ifmaplab" value="aa:bb:cc:dd:ee:ff" />
+>>> print MACAddress("aa:bb:cc:dd:ee:ff",)
+<mac-address value="aa:bb:cc:dd:ee:ff" />
+>>> print Device("123:45")
+<device><name>123:45</name></device>
+>>> print Device("123:45","aikdummynamef34feccc28b3d44f")
+<device><name>123:45</name><aik-name>aikdummynamef34feccc28b3d44f<aik-name></device>
+>>> print AccessRequest("111:23","ifmaplab",)
+<access-request name="111:23" administrative-domain="ifmaplab" />
+>>> print AccessRequest("111:23",)
+<access-request name="111:23" />
+>>> print Identity("john.doe")
+<identity name="john.doe" />
+>>> print Identity("john.doe@example.com", type="email_address")
+<identity name="john.doe@example.com" type="email_address" />
+>>> print Identity("ef9b13e5df7dae502c51db7ca4624552", type="other", other_type="RFID")
+<identity name="ef9b13e5df7dae502c51db7ca4624552" type="other" other-type="RFID" />
+>>> print Identity("ef9b13e5df7dae502c51db7ca4624552", type="other", other_type="RFID", administrative_domain="ifmaplab")
+<identity name="ef9b13e5df7dae502c51db7ca4624552" type="other" other-type="RFID" administrative-domain="ifmaplab" />
+>>> print CustomIdentity("student-id")
+<custom-identifier><student-id /></custom-identifier>
+>>> print CustomIdentity("student-id", "nsu")
+<custom-identifier><nsu:student-id /></custom-identifier>
+>>> print CustomIdentity("student-id", "nsu","http://nsu.example.org/student")
+<custom-identifier><nsu:student-id xlmns=nsu:http://nsu.example.org/student /></custom-identifier>
+>>> print CustomIdentity("student-id", namespace="http://nsu.example.org/student")
+<custom-identifier><student-id xlmns=http://nsu.example.org/student /></custom-identifier>
+>>> print CustomIdentity("student-id", attributes={'ID':"1864b64efe4903d7f45b4cdbdad38ab7d828e499", 'serial':"S1223505",})
+<custom-identifier><student-id serial="S1223505" ID="1864b64efe4903d7f45b4cdbdad38ab7d828e499" /></custom-identifier>
+>>> print CustomIdentity("student-id", "nsu", "http://nsu.example.org/student", attributes={'ID':"1864b64efe4903d7f45b4cdbdad38ab7d828e499", 'serial':"S1223505",})
+<custom-identifier><nsu:student-id xlmns=nsu:http://nsu.example.org/student serial="S1223505" ID="1864b64efe4903d7f45b4cdbdad38ab7d828e499" /></custom-identifier>
+>>> print NewSessionRequest('10000')
+<ifmap:newSession max-poll-result-size="10000" />
+>>> print NewSessionRequest()
+<ifmap:newSession />
+>>> print RenewSessionRequest('12345678')
+<ifmap:renewSession session-id="12345678" />
+>>> print EndSessionRequest('12345678')
+<ifmap:endSession session-id="12345678" />
+>>> print PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), metadata='<meta></meta>')
+<update><ip-address value="10.0.0.1" /><meta></meta></update>
+>>> print PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), metadata='<meta></meta>', lifetime='forever')
+<update lifetime="forever" ><ip-address value="10.0.0.1" /><meta></meta></update>
+>>> print PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), id2=str(IPAddress("10.0.0.2")), metadata='<meta></meta>')
+<update><link><ip-address value="10.0.0.1" /><ip-address value="10.0.0.2" /></link><meta></meta></update>
+>>> print PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), id2=str(IPAddress("10.0.0.2")), metadata='<meta></meta>', lifetime='forever')
+<update lifetime="forever" ><link><ip-address value="10.0.0.1" /><ip-address value="10.0.0.2" /></link><meta></meta></update>
+>>> print PublishDeleteOperation(id1=str(IPAddress("10.0.0.1")))
+<delete><ip-address value="10.0.0.1" /></delete>
+>>> print PublishDeleteOperation(id1=str(IPAddress("10.0.0.1")), id2=str(IPAddress("10.0.0.2")))
+<delete><link><ip-address value="10.0.0.1" /><ip-address value="10.0.0.2" /></link></delete>
+>>> print PublishDeleteOperation(id1=str(IPAddress("10.0.0.1")), id2=str(IPAddress("10.0.0.2")), filter='filter1')
+<delete filter="filter1" ><link><ip-address value="10.0.0.1" /><ip-address value="10.0.0.2" /></link></delete>
+>>> print PublishDeleteOperation(id1=str(IPAddress("10.0.0.1")), filter='filter1')
+<delete filter="filter1" ><ip-address value="10.0.0.1" /></delete>
+>>> print PublishNotifyOperation(id1=str(IPAddress("10.0.0.1")), metadata='<meta></meta>')
+<notify><ip-address value="10.0.0.1" /><meta></meta></notify>
+>>> print PublishNotifyOperation(id1=str(IPAddress("10.0.0.1")), id2=str(IPAddress("10.0.0.2")), metadata='<meta></meta>')
+<notify><link><ip-address value="10.0.0.1" /><ip-address value="10.0.0.2" /></link><meta></meta></notify>
+>>> print PublishRequest('12345678', str(PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), id2=str(IPAddress("10.0.0.2")), metadata='<meta></meta>', lifetime='forever')))
+<ifmap:publish session-id="12345678" ><update lifetime="forever" ><link><ip-address value="10.0.0.1" /><ip-address value="10.0.0.2" /></link><meta></meta></update></ifmap:publish>
+>>> print PublishRequest('12345678', str(PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), id2=str(IPAddress("10.0.0.2")), metadata='<meta></meta>', lifetime='forever')), validation='MetadataOnly')
+<ifmap:publish session-id="12345678" validation="MetadataOnly" ><update lifetime="forever" ><link><ip-address value="10.0.0.1" /><ip-address value="10.0.0.2" /></link><meta></meta></update></ifmap:publish>
+>>> print Response('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns3:Envelope xmlns:ns2="http://www.trustedcomputinggroup.org/2010/IFMAP/2" xmlns:ns3="http://www.w3.org/2003/05/soap-envelope"><ns3:Body><ns2:response><newSessionResult ifmap-publisher-id="test-2100079558-1" session-id="1323996407-1025975286-283779864-1097320563"/></ns2:response></ns3:Body></ns3:Envelope>')
+<newSessionResult ifmap-publisher-id="test-2100079558-1" session-id="1323996407-1025975286-283779864-1097320563" />
+>>> print newSessionResult('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns3:Envelope xmlns:ns2="http://www.trustedcomputinggroup.org/2010/IFMAP/2" xmlns:ns3="http://www.w3.org/2003/05/soap-envelope"><ns3:Body><ns2:response><newSessionResult ifmap-publisher-id="test-2100079558-1" session-id="1323996407-1025975286-283779864-1097320563"/></ns2:response></ns3:Body></ns3:Envelope>').get_session_id()
+1323996407-1025975286-283779864-1097320563
+>>> print newSessionResult('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns3:Envelope xmlns:ns2="http://www.trustedcomputinggroup.org/2010/IFMAP/2" xmlns:ns3="http://www.w3.org/2003/05/soap-envelope"><ns3:Body><ns2:response><newSessionResult ifmap-publisher-id="test-2100079558-1" session-id="1323996407-1025975286-283779864-1097320563"/></ns2:response></ns3:Body></ns3:Envelope>').get_publisher_id()
+test-2100079558-1
+>>>
 
+"""
+
+from ifmap.client import client, namespaces
+from ifmap.request import NewSessionRequest, RenewSessionRequest, EndSessionRequest, PublishRequest
+from ifmap.id import IPAddress, MACAddress, Device, AccessRequest, Identity, CustomIdentity
+from ifmap.operations import PublishUpdateOperation, PublishNotifyOperation, PublishDeleteOperation
+from ifmap.util import attr, link_ids
+from ifmap.response import Response, newSessionResult
+from xml.etree import ElementTree
 
 import logging
 
@@ -9,76 +105,28 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+def client_test():
+    print 'testing ifmap client (this requires a running server)'
+    mapclient = client("https://127.0.0.1:8443", 'test', 'test', namespaces)
 
-publish_blob = """<ifmap:publish session-id=\"%(sessionid)s\"><update lifetime="forever"><identity name="%(username)s" type="username" /><access-request name="111:23" /><metadata><meta:role ifmap-cardinality="multiValue"><name>%(role)s</name></meta:role></metadata></update>
-<update lifetime="forever"><mac-address value="ff:11:22:33:44:55"  /><ip-address value="10.0.0.5"   />
-<metadata><meta:ip-mac  ifmap-cardinality="multiValue" ><start-time >2009-10-27T00:00:00</start-time><end-time >2009-10-28T00:00:00</end-time>
-<dhcp-server >10.0.0.3</dhcp-server></meta:ip-mac></metadata></update>
-<update lifetime="forever"><access-request name="111:23"  /><ip-address value="10.0.0.5"   />
-<metadata><meta:access-request-ip  ifmap-cardinality="singleValue" ></meta:access-request-ip></metadata></update>
-<update lifetime="forever"><access-request name="111:23"  /><metadata><meta:capability  ifmap-cardinality="multiValue" >
-<name >Trusted</name><administrative-domain >Infoblox</administrative-domain></meta:capability></metadata></update>
-<update lifetime="forever"><device><name>123:45</name></device>
-<metadata><meta:device-attribute  ifmap-cardinality="multiValue" ><name >AntiVirusRunning</name></meta:device-attribute></metadata></update>
-</ifmap:publish>"""
+    result = mapclient.call('newSession', NewSessionRequest())
+    mapclient.set_session_id(newSessionResult(result).get_session_id())
+    mapclient.set_publisher_id(newSessionResult(result).get_publisher_id())
 
-
-	#
-	#def test_connect(self):
-	#
-	#	newSessionRequest = '<ifmap:newSession />'
-	#	response = self.call('newSession', newSessionRequest)
-	#	self.__session = {'sessionid': response.newSessionResult['session-id'],
-	#		'publisher_id': response.newSessionResult['ifmap-publisher-id'],
-	#	}
-	#
-	#def test_publish(self):
-	#	username = 'jdoe'
-	#	role = 'employee'
-	#	publish_req = publish_blob % {'sessionid': self.session['sessionid'],'username':username,'role':role, }
-	#	response = self.call('publish', publish_req)
-	#	return response
-
-
-
-print IPAddress("10.0.0.1","IPv4","ifmaplab")
-print IPAddress("10.0.0.1","IPv4",)
-print IPAddress("10.0.0.1",)
-print IPAddress("3ffe:1900:4545:3:200:f8ff:fe21:67cf","IPv6","ifmaplab")
-print IPAddress("3ffe:1900:4545:3:200:f8ff:fe21:67cf","IPv6",)
-print IPAddress("3ffe:1900:4545:3:200:f8ff:fe21:67cf",)
-print MACAddress("aa:bb:cc:dd:ee:ff","ifmaplab",)
-print MACAddress("aa:bb:cc:dd:ee:ff",)
-print Device("123:45")
-print Device("123:45","aikdummynamef34feccc28b3d44f")
-print AccessRequest("111:23","ifmaplab",)
-print AccessRequest("111:23",)
-print Identity("john.doe")
-print Identity("john.doe@example.com", type="email_address")
-print Identity("ef9b13e5df7dae502c51db7ca4624552", type="other", other_type="RFID")
-print Identity("ef9b13e5df7dae502c51db7ca4624552", type="other", other_type="RFID", administrative_domain="ifmaplab")
-print CustomIdentity("student-id")
-print CustomIdentity("student-id", "nsu")
-print CustomIdentity("student-id", "nsu", "http://nsu.example.org/student")
-print CustomIdentity("student-id", namespace="http://nsu.example.org/student")
-print CustomIdentity("student-id", attributes={'ID':"1864b64efe4903d7f45b4cdbdad38ab7d828e499", 'serial':"S1223505",})
-print CustomIdentity("student-id", "nsu", "http://nsu.example.org/student", attributes={'ID':"1864b64efe4903d7f45b4cdbdad38ab7d828e499", 'serial':"S1223505",})
-
-print NewSessionRequest('10000')
-print NewSessionRequest()
-
-mapclient = client("https://127.0.0.1:8443", 'test', 'test', namespaces)
-
-method = 'newSession'
-request = NewSessionRequest()
-result = mapclient.call(method, request)
-
-print '==== sent ===='
-print mapclient.last_sent()
-
-print '==== received ===='
-print mapclient.last_received()
-
-print 'test complete'
-
-
+    meta = '<metadata><meta:role ifmap-cardinality="multiValue" ><name >employee</name></meta:role></metadata>'
+    pubreq = PublishRequest(mapclient.get_session_id(), str(PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), metadata=meta, lifetime='forever')))
+    result = mapclient.call('publish', pubreq)
+    print Response(result)
+    
+    print '==== sent ===='
+    print mapclient.last_sent()
+    print '==== received ===='
+    print mapclient.last_received()
+    print 'test complete'
+    print '==================='
+    print ''
+    
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod(verbose=True)
+    client_test()

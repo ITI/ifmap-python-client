@@ -28,7 +28,8 @@ class client:
 	"""
 	http = Http()
 	__url = None
-	__session = None
+	__session_id = None
+	__publisher_id = None
 	__last_sent = None
 	__last_received = None
 	__namespaces = None
@@ -81,6 +82,18 @@ class client:
 				return content
 		except:
 				raise
+	
+	def set_session_id(self, session_id):
+		self.__session_id = session_id
+	
+	def set_publisher_id(self, publisher_id):
+		self.__publisher_id = publisher_id
+		
+	def get_session_id(self):
+		return self.__session_id
+	
+	def get_publisher_id(self):
+		return self.__publisher_id
 
 
 if __name__ == "__main__":

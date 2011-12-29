@@ -9,6 +9,7 @@
 # example:
 #  >>> print ifmap.id.IPAdress('10.0.0.1')
 
+from util import attr
 
 class ifmapIDFactory:
     pass
@@ -18,12 +19,10 @@ class IPAddress(ifmapIDFactory):
 	"""
 	XML Factory for an IP Address IF-MAP Identifier
 	"""
-
 	def __init__(self, ip_address, type=None, administrative_domain=None):
 		self.__ip_address = ip_address
 		self.__type = type
 		self.__administrative_domain = administrative_domain
-		return None;
 
 	def administrative_domain(self):
 		return self.__administrative_domain
@@ -35,15 +34,8 @@ class IPAddress(ifmapIDFactory):
 		return self.__type
 
 	def __str__(self):
-		self.__XML = "<ip-address"
-		self.__XML += ' value="'+self.__ip_address+'"'
-		# type and administrative_domain are optional
-		if self.__type:
-			self.__XML +=' type="'+self.__type+'"'
-		if self.__administrative_domain:
-			self.__XML += ' administrative-domain="'+self.__administrative_domain+'"'
-		self.__XML += " />"
-		return self.__XML
+		_attr = attr({'value':self.__ip_address,'type':self.__type,'administrative-domain':self.__administrative_domain})
+		return '<ip-address %s' % _attr + '/>'
 
 class MACAddress(ifmapIDFactory):
 	"""
@@ -62,13 +54,9 @@ class MACAddress(ifmapIDFactory):
 		return self.__mac_address
 
 	def __str__(self):
-		self.__XML = "<mac-address"
-		self.__XML += ' value="'+self.__mac_address+'"'
-		# administrative_domain is optional
-		if self.__administrative_domain:
-			self.__XML += ' administrative-domain="'+self.__administrative_domain+'"'
-		self.__XML += " />"
-		return self.__XML
+	    _attr = attr({'value':self.__mac_address,'administrative-domain':self.__administrative_domain})
+	    return '<mac-address %s' % _attr + '/>'
+
 
 class Device(ifmapIDFactory):
 	"""
