@@ -9,8 +9,7 @@ This is a Python library for building IF-MAP clients.
 
 It supports the Trusted COmputing Group IF-MAP protocol v.2.0
 
-Currently Implemented:
-
+Currently Implemented (all IF-MAP 2.0 operations are done):
 * Session: newSession, endSession, renewSession
 * Publish: Update, Notify, Delete
 * Identities: IP, MAC, Device, Access Request, Identity, Custom Identifier
@@ -21,7 +20,6 @@ Currently Implemented:
 * Poll: PollRequest
 
 TODO:
-* Implement IF-MAP operations
 * Handle and raise exceptions
 * Implement XML schema validation (as optional)
 
