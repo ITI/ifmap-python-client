@@ -17,7 +17,7 @@ def attr(attributes):
                 __xml += label + '="' + value + '" '
         return __xml
     else:
-        return
+        return ''
 
 def link_ids(id1, id2):
     """

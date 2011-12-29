@@ -87,9 +87,26 @@ session-id="2345" validation="metadata"
 1323996407-1025975286-283779864-1097320563
 >>> print newSessionResult('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns3:Envelope xmlns:ns2="http://www.trustedcomputinggroup.org/2010/IFMAP/2" xmlns:ns3="http://www.w3.org/2003/05/soap-envelope"><ns3:Body><ns2:response><newSessionResult ifmap-publisher-id="test-2100079558-1" session-id="1323996407-1025975286-283779864-1097320563"/></ns2:response></ns3:Body></ns3:Envelope>').get_publisher_id()
 test-2100079558-1
+>>> print Metadata('role', 'employee')
+<meta:role >employee</meta:role>
+>>> print Metadata('role', 'employee', {'pot':'black', 'kettle':'black'})
+<meta:role pot="black" kettle="black" >employee</meta:role>
+>>> print Metadata('role', 'employee', {'pot':'black', 'kettle':'black'}, 'meta')
+<meta:role pot="black" kettle="black" >employee</meta:role>
+>>> print Metadata('role', 'employee', {'pot':'black', 'kettle':'black'}, 'meta', 'http://meta.com/')
+<meta:role xmlns:meta="http://meta.com/" pot="black" kettle="black" >employee</meta:role>
 >>>
 
 """
+
+import logging
+
+# create logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+
+from xml.etree import ElementTree
 
 from ifmap.client import client, namespaces
 from ifmap.request import NewSessionRequest, RenewSessionRequest, EndSessionRequest, PublishRequest
@@ -97,13 +114,8 @@ from ifmap.id import IPAddress, MACAddress, Device, AccessRequest, Identity, Cus
 from ifmap.operations import PublishUpdateOperation, PublishNotifyOperation, PublishDeleteOperation
 from ifmap.util import attr, link_ids
 from ifmap.response import Response, newSessionResult
-from xml.etree import ElementTree
+from ifmap.metadata import Metadata
 
-import logging
-
-# create logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 def client_test():
     print 'testing ifmap client (this requires a running server)'
@@ -113,7 +125,7 @@ def client_test():
     mapclient.set_session_id(newSessionResult(result).get_session_id())
     mapclient.set_publisher_id(newSessionResult(result).get_publisher_id())
 
-    meta = '<metadata><meta:role ifmap-cardinality="multiValue" ><name >employee</name></meta:role></metadata>'
+    meta = str(Metadata('role', 'employee', {'ifmap-cardinality':'multiValue'}))
     pubreq = PublishRequest(mapclient.get_session_id(), str(PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), metadata=meta, lifetime='forever')))
     result = mapclient.call('publish', pubreq)
     print Response(result)
@@ -128,5 +140,5 @@ def client_test():
     
 if __name__ == "__main__":
     import doctest
-    doctest.testmod(verbose=True)
+    doctest.testmod()
     client_test()
