@@ -18,7 +18,10 @@ Currently Implemented:
 * Search: Search on all of the above IDs
 
 TODO:
-Subscribe, Poll, Purge
+* Implement IF-MAP operations: Subscribe, Poll, Purge
+* Handle and raise exceptions
+* Implement XML schema validation (as optional)
+
 
 
 Installation
