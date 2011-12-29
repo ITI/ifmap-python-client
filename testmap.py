@@ -101,6 +101,12 @@ test-2100079558-1
 <ifmap:search session-id="12345" validation="None" ><ip-address value="10.0.0.1" /></ifmap:search>
 >>> print SearchRequest('12345', str(IPAddress('10.0.0.1')), validation='None', search_parameters={'max_depth':'3', 'max_size':'10000'})
 <ifmap:search session-id="12345" validation="None" max_depth="3" max_size="10000" ><ip-address value="10.0.0.1" /></ifmap:search>
+>>> print SubscribeUpdateOperation('subscription-1',str(IPAddress("10.0.0.1")))
+<update name="subscription-1" ><ip-address value="10.0.0.1" /></update>
+>>> print SubscribeDeleteOperation('subscription-1')
+<delete name="subscription-1" />
+>>> print SubscribeRequest('12345', operations=str(SubscribeUpdateOperation('subscription-1',str(IPAddress("10.0.0.1")))))
+<ifmap:subscribe session-id="12345" ><update name="subscription-1" ><ip-address value="10.0.0.1" /></update></ifmap:subscribe>
 >>>
 """
 
@@ -114,9 +120,9 @@ logger.setLevel(logging.DEBUG)
 from xml.etree import ElementTree
 
 from ifmap.client import client, namespaces
-from ifmap.request import NewSessionRequest, RenewSessionRequest, EndSessionRequest, PublishRequest, SearchRequest
+from ifmap.request import NewSessionRequest, RenewSessionRequest, EndSessionRequest, PublishRequest, SearchRequest, SubscribeRequest
 from ifmap.id import IPAddress, MACAddress, Device, AccessRequest, Identity, CustomIdentity
-from ifmap.operations import PublishUpdateOperation, PublishNotifyOperation, PublishDeleteOperation
+from ifmap.operations import PublishUpdateOperation, PublishNotifyOperation, PublishDeleteOperation, SubscribeUpdateOperation, SubscribeDeleteOperation
 from ifmap.util import attr, link_ids
 from ifmap.response import Response, newSessionResult
 from ifmap.metadata import Metadata
@@ -132,10 +138,16 @@ def client_test():
     meta = str(Metadata('role', 'employee', {'ifmap-cardinality':'multiValue'}))
     pubreq = PublishRequest(mapclient.get_session_id(), str(PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), metadata=meta, lifetime='forever')))
     result = mapclient.call('publish', pubreq)
-    print Response(result)
     
     searchreq = SearchRequest(mapclient.get_session_id(), str(IPAddress("10.0.0.1")), validation="None")
     result = mapclient.call('search', searchreq)
+    
+    subreq = SubscribeRequest(mapclient.get_session_id(), operations=str(SubscribeUpdateOperation('subscription-1',str(IPAddress("10.0.0.1")))))
+    result = mapclient.call('subscribe', subreq)
+    
+    subreq = SubscribeRequest(mapclient.get_session_id(), operations=str(SubscribeDeleteOperation('subscription-1')))
+    result = mapclient.call('subscribe', subreq)
+    
     
     print '==== sent ===='
     print mapclient.last_sent()

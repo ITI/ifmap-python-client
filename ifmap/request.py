@@ -69,4 +69,21 @@ class SearchRequest(RequestBase):
 		_attr = attr({'session-id': self.__session_id, 'validation' : self.__validation})
 		return '<ifmap:search ' + _attr + _params + '>' +  self.__identifier + '</ifmap:search>'
 	
+class SubscribeRequest(RequestBase):
+	"""
+	Subscribe request factory
+	"""
+	
+	def __init__(self, session_id, validation=None, namespaces=None, operations=None):
+		self.__session_id = session_id
+		self.__namespaces = namespaces
+		self.__validation = validation
+		self.__operations = operations
+	
+	def __str__(self):
+		_attr = attr({'session-id': self.__session_id, 'validation' : self.__validation})
+		return '<ifmap:subscribe %s' % _attr + '>' + self.__operations + '</ifmap:subscribe>'
+	
+		
+	
 	

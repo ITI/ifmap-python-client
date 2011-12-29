@@ -16,9 +16,10 @@ Currently Implemented:
 * Identities: IP, MAC, Device, Access Request, Identity, Custom Identifier
 * Metadata: IF-MAP metadata and custom namespace metadata
 * Search: Search on all of the above IDs
+* Subscribe: SubscribeUpdate, SubscribeDelete
 
 TODO:
-* Implement IF-MAP operations: Subscribe, Poll, Purge
+* Implement IF-MAP operations: Poll, Purge
 * Handle and raise exceptions
 * Implement XML schema validation (as optional)
 
