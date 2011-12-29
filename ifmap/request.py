@@ -84,6 +84,16 @@ class SubscribeRequest(RequestBase):
 		_attr = attr({'session-id': self.__session_id, 'validation' : self.__validation})
 		return '<ifmap:subscribe %s' % _attr + '>' + self.__operations + '</ifmap:subscribe>'
 	
+class PollRequest(RequestBase):
+	def __init__(self, session_id, validation=None, namespaces=None):
+		self.__session_id = session_id
+		self.__namespaces = namespaces
+		self.__validation = validation
+	
+	def __str__(self):
+		_attr = attr({'session-id': self.__session_id, 'validation' : self.__validation})
+		return '<ifmap:poll %s' % _attr + '/>'
+	
 class PurgeRequest(RequestBase):
 	def __init__(self, session_id, publisher_id=None, validation=None):
 		self.__session_id = session_id

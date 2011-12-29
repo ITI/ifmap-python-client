@@ -109,6 +109,8 @@ test-2100079558-1
 <ifmap:subscribe session-id="12345" ><update name="subscription-1" ><ip-address value="10.0.0.1" /></update></ifmap:subscribe>
 >>> print PurgeRequest('12345','publisher-12345')
 <ifmap:purgePublisher session-id="12345" ifmap-publisher-id="publisher-12345" />
+>>> print PollRequest('12345')
+<ifmap:poll session-id="12345" />
 >>>
 """
 
@@ -122,7 +124,7 @@ logger.setLevel(logging.DEBUG)
 from xml.etree import ElementTree
 
 from ifmap.client import client, namespaces
-from ifmap.request import NewSessionRequest, RenewSessionRequest, EndSessionRequest, PublishRequest, SearchRequest, SubscribeRequest, PurgeRequest
+from ifmap.request import NewSessionRequest, RenewSessionRequest, EndSessionRequest, PublishRequest, SearchRequest, SubscribeRequest, PurgeRequest, PollRequest
 from ifmap.id import IPAddress, MACAddress, Device, AccessRequest, Identity, CustomIdentity
 from ifmap.operations import PublishUpdateOperation, PublishNotifyOperation, PublishDeleteOperation, SubscribeUpdateOperation, SubscribeDeleteOperation
 from ifmap.util import attr, link_ids
@@ -147,20 +149,26 @@ def client_test():
     subreq = SubscribeRequest(mapclient.get_session_id(), operations=str(SubscribeUpdateOperation('subscription-1',str(IPAddress("10.0.0.1")))))
     result = mapclient.call('subscribe', subreq)
     
+    pollreq = PollRequest(mapclient.get_session_id())
+    result = mapclient.call('poll', pollreq)
+    
     subreq = SubscribeRequest(mapclient.get_session_id(), operations=str(SubscribeDeleteOperation('subscription-1')))
     result = mapclient.call('subscribe', subreq)
     
     purgereq = PurgeRequest(mapclient.get_session_id(), mapclient.get_publisher_id())
     result = mapclient.call('purge', purgereq)
     
+    endreq = EndSessionRequest(mapclient.get_session_id())
+    result = mapclient.call('endSession', endreq)
     
-    print '==== sent ===='
-    print mapclient.last_sent()
-    print '==== received ===='
-    print mapclient.last_received()
-    print 'test complete'
-    print '==================='
-    print ''
+    #print '==== sent ===='
+    #print mapclient.last_sent()
+    #print '==== received ===='
+    #print mapclient.last_received()
+    #print 'test complete'
+    #print '==================='
+    #print ''
+    
     
 if __name__ == "__main__":
     import doctest
