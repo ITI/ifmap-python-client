@@ -107,6 +107,8 @@ test-2100079558-1
 <delete name="subscription-1" />
 >>> print SubscribeRequest('12345', operations=str(SubscribeUpdateOperation('subscription-1',str(IPAddress("10.0.0.1")))))
 <ifmap:subscribe session-id="12345" ><update name="subscription-1" ><ip-address value="10.0.0.1" /></update></ifmap:subscribe>
+>>> print PurgeRequest('12345','publisher-12345')
+<ifmap:purgePublisher session-id="12345" ifmap-publisher-id="publisher-12345" />
 >>>
 """
 
@@ -120,7 +122,7 @@ logger.setLevel(logging.DEBUG)
 from xml.etree import ElementTree
 
 from ifmap.client import client, namespaces
-from ifmap.request import NewSessionRequest, RenewSessionRequest, EndSessionRequest, PublishRequest, SearchRequest, SubscribeRequest
+from ifmap.request import NewSessionRequest, RenewSessionRequest, EndSessionRequest, PublishRequest, SearchRequest, SubscribeRequest, PurgeRequest
 from ifmap.id import IPAddress, MACAddress, Device, AccessRequest, Identity, CustomIdentity
 from ifmap.operations import PublishUpdateOperation, PublishNotifyOperation, PublishDeleteOperation, SubscribeUpdateOperation, SubscribeDeleteOperation
 from ifmap.util import attr, link_ids
@@ -147,6 +149,9 @@ def client_test():
     
     subreq = SubscribeRequest(mapclient.get_session_id(), operations=str(SubscribeDeleteOperation('subscription-1')))
     result = mapclient.call('subscribe', subreq)
+    
+    purgereq = PurgeRequest(mapclient.get_session_id(), mapclient.get_publisher_id())
+    result = mapclient.call('purge', purgereq)
     
     
     print '==== sent ===='

@@ -17,9 +17,10 @@ Currently Implemented:
 * Metadata: IF-MAP metadata and custom namespace metadata
 * Search: Search on all of the above IDs
 * Subscribe: SubscribeUpdate, SubscribeDelete
+* Purge: PurgeRequest
 
 TODO:
-* Implement IF-MAP operations: Poll, Purge
+* Implement IF-MAP operations: Poll, AttachSession
 * Handle and raise exceptions
 * Implement XML schema validation (as optional)
 

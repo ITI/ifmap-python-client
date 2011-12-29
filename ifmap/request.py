@@ -84,6 +84,12 @@ class SubscribeRequest(RequestBase):
 		_attr = attr({'session-id': self.__session_id, 'validation' : self.__validation})
 		return '<ifmap:subscribe %s' % _attr + '>' + self.__operations + '</ifmap:subscribe>'
 	
-		
-	
-	
+class PurgeRequest(RequestBase):
+	def __init__(self, session_id, publisher_id=None, validation=None):
+		self.__session_id = session_id
+		self.__publisher_id = publisher_id
+		self.__validation = validation
+
+	def __str__(self):
+		__attr = attr({'session-id':self.__session_id, 'validation':self.__validation,'ifmap-publisher-id':self.__publisher_id})
+		return '<ifmap:purgePublisher %s' % __attr + '/>';
