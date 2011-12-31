@@ -1,10 +1,8 @@
 """
  Script to perform tests on ifmap library
- 
+
 >>> 1+1 # make sure at least one test passes
 2
->>> print attr({'session-id': '2345', 'validation':'metadata', 'empty':''})
-session-id="2345" validation="metadata" 
 >>> print IPAddress("10.0.0.1","IPv4","ifmaplab")
 <ip-address administrative-domain="ifmaplab" type="IPv4" value="10.0.0.1" />
 >>> print IPAddress("10.0.0.1","IPv4",)
@@ -117,9 +115,18 @@ test-2100079558-1
 import logging
 
 # create logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('ifmap.client')
 logger.setLevel(logging.DEBUG)
 
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+# create formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# add formatter to ch
+ch.setFormatter(formatter)
+# add ch to logger
+logger.addHandler(ch)
 
 from xml.etree import ElementTree
 
@@ -142,34 +149,27 @@ def client_test():
     meta = str(Metadata('role', 'employee', {'ifmap-cardinality':'multiValue'}))
     pubreq = PublishRequest(mapclient.get_session_id(), str(PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), metadata=meta, lifetime='forever')))
     result = mapclient.call('publish', pubreq)
-    
+
     searchreq = SearchRequest(mapclient.get_session_id(), str(IPAddress("10.0.0.1")), validation="None")
     result = mapclient.call('search', searchreq)
-    
+
     subreq = SubscribeRequest(mapclient.get_session_id(), operations=str(SubscribeUpdateOperation('subscription-1',str(IPAddress("10.0.0.1")))))
     result = mapclient.call('subscribe', subreq)
-    
+
     pollreq = PollRequest(mapclient.get_session_id())
     result = mapclient.call('poll', pollreq)
-    
+
     subreq = SubscribeRequest(mapclient.get_session_id(), operations=str(SubscribeDeleteOperation('subscription-1')))
     result = mapclient.call('subscribe', subreq)
-    
+
     purgereq = PurgeRequest(mapclient.get_session_id(), mapclient.get_publisher_id())
     result = mapclient.call('purge', purgereq)
-    
+
     endreq = EndSessionRequest(mapclient.get_session_id())
     result = mapclient.call('endSession', endreq)
-    
-    #print '==== sent ===='
-    #print mapclient.last_sent()
-    #print '==== received ===='
-    #print mapclient.last_received()
-    #print 'test complete'
-    #print '==================='
-    #print ''
-    
-    
+
+
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
