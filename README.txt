@@ -8,6 +8,7 @@ IF-MAP Python Client Library
 This is a Python library for building IF-MAP clients.
 
 It supports the Trusted Computing Group IF-MAP protocol v.2.0
+There is no support for IF-MAP 1.0 or 1.1 and there are no plans to support those versions.
 
 Currently Implemented:
 
