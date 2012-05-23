@@ -14,9 +14,9 @@ log = getLogger(__name__) # when imported, the logger will be named "ifmap.clien
 #try:
 #	import httplib2 as http_client_lib
 #	Http = http_client_lib.Http
-#	HttpException = http_client_lib.HttpLib2Error
 #except ImportError:
 import requests
+HttpException = requests.exceptions.HTTPError
 from requests.auth import HTTPBasicAuth
 #import urllib2 as http_client_lib
 #HttpException = (http_client_lib.URLError, http_client_lib.HTTPError)
@@ -63,7 +63,7 @@ class client:
 
 			#self.http.add_credentials(user, password)
 
-            self._auth = HTTPBasicAuth(user, password)
+			self._auth = HTTPBasicAuth(user, password)
 
 		if namespaces:
 				self.__namespaces = namespaces
@@ -98,13 +98,13 @@ class client:
 
 				#response, content = self.http.request(self.__url,"POST", body=xml, headers=headers )
 
-                resp = requests.post(self.__url, headers=headers,
-                        auth=self._auth, data=xml)
+				resp = requests.post(self.__url, headers=headers,
+                        auth=self._auth, data=xml, verify=False)
 				self.__last_sent = xml
 				self.__last_received = resp.text
 
 				log.debug("========  received IF-MAP response ========")
-				log.debug("\n%s\n", content)
+				log.debug("\n%s\n", resp.text)
 				log.debug("========  /receive IF-MAP response ========")
 
 				return resp.text
