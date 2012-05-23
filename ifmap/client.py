@@ -16,12 +16,14 @@ log = getLogger(__name__) # when imported, the logger will be named "ifmap.clien
 #	Http = http_client_lib.Http
 #	HttpException = http_client_lib.HttpLib2Error
 #except ImportError:
-import urllib2 as http_client_lib
-HttpException = (http_client_lib.URLError, http_client_lib.HTTPError)
-class Http(): # wrapper to use when httplib2 not available
-	def request(self, url, method, body, headers):
-		f = http_client_lib.urlopen(http_client_lib.Request(url, body, headers))
-		return f.info(), f.read()
+import requests
+from requests.auth import HTTPBasicAuth
+#import urllib2 as http_client_lib
+#HttpException = (http_client_lib.URLError, http_client_lib.HTTPError)
+#class Http(): # wrapper to use when httplib2 not available
+#	def request(self, url, method, body, headers):
+#		f = http_client_lib.urlopen(http_client_lib.Request(url, body, headers))
+#		return f.info(), f.read()
 
 namespaces = {
 	'env'   :   "http://www.w3.org/2003/05/soap-envelope",
@@ -33,7 +35,7 @@ class client:
 	"""
 	IF-MAP client
 	"""
-	http = Http()
+	#http = Http()
 	__url = None
 	__session_id = None
 	__publisher_id = None
@@ -54,12 +56,14 @@ class client:
 			#self.__password_mgr=http_client_lib.HTTPPasswordMgrWithDefaultRealm()
 			#self.__password_mgr.add_password(None, url, user, password)
 			#handler = http_client_lib.HTTPBasicAuthHandler(self.__password_mgr)
-			handler = http_client_lib.HTTPBasicAuthHandler()
-			handler.add_password(None, url, user, password)
-			opener = http_client_lib.build_opener(handler)
-			http_client_lib.install_opener(opener)
-			
+			#handler = http_client_lib.HTTPBasicAuthHandler()
+			#handler.add_password(None, url, user, password)
+			#opener = http_client_lib.build_opener(handler)
+			#http_client_lib.install_opener(opener)
+
 			#self.http.add_credentials(user, password)
+
+            self._auth = HTTPBasicAuth(user, password)
 
 		if namespaces:
 				self.__namespaces = namespaces
@@ -92,15 +96,18 @@ class client:
 				log.debug("\n%s\n", xml)
 				log.debug("========  /sending IF-MAP message ========")
 
-				response, content = self.http.request(self.__url,"POST", body=xml, headers=headers )
+				#response, content = self.http.request(self.__url,"POST", body=xml, headers=headers )
+
+                resp = requests.post(self.__url, headers=headers,
+                        auth=self._auth, data=xml)
 				self.__last_sent = xml
-				self.__last_received = content
+				self.__last_received = resp.text
 
 				log.debug("========  received IF-MAP response ========")
 				log.debug("\n%s\n", content)
 				log.debug("========  /receive IF-MAP response ========")
 
-				return content
+				return resp.text
 
 		except	HttpException, e:
 				log.error("HTTP Connection error in IF-MAP client: %s", e.reason)
