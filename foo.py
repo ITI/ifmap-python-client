@@ -32,7 +32,7 @@ def client_test():
     mapclient.set_session_id(newSessionResult(result).get_session_id())
     mapclient.set_publisher_id(newSessionResult(result).get_publisher_id())
 
-    meta = str(Metadata('role', 'employee', {'ifmap-cardinality':'multiValue'}))
+    meta = str(Metadata('role', '', {'ifmap-cardinality':'multiValue'}, elements='<name>employee</name>'))
     pubreq = PublishRequest(mapclient.get_session_id(), str(PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), metadata=meta, lifetime='forever')))
     result = mapclient.call('publish', pubreq)
 
