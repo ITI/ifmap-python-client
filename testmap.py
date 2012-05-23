@@ -140,13 +140,13 @@ from ifmap.metadata import Metadata
 
 def client_test():
     print 'testing ifmap client (this requires a running server)'
-    mapclient = client("https://127.0.0.1:8443", 'test', 'test', namespaces)
+    mapclient = client("https://localhost:8096", 'mapclient', 'mapclient', namespaces)
 
     result = mapclient.call('newSession', NewSessionRequest())
     mapclient.set_session_id(newSessionResult(result).get_session_id())
     mapclient.set_publisher_id(newSessionResult(result).get_publisher_id())
 
-    meta = str(Metadata('role', 'employee', {'ifmap-cardinality':'multiValue'}))
+    meta = str(Metadata('role', '', {'ifmap-cardinality':'multiValue'}, elements='<name>employee</name>'))
     pubreq = PublishRequest(mapclient.get_session_id(), str(PublishUpdateOperation(id1=str(IPAddress("10.0.0.1")), metadata=meta, lifetime='forever')))
     result = mapclient.call('publish', pubreq)
 
