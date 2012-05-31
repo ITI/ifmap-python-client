@@ -5,7 +5,6 @@
 # Open Source, see LICENSE
 #
 
-import urllib
 from logging import getLogger
 
 log = getLogger(__name__) # when imported, the logger will be named "ifmap.client"
