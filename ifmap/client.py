@@ -12,9 +12,6 @@ log = getLogger(__name__) # when imported, the logger will be named "ifmap.clien
 
 # Import either httplib2 or urllib2 and map to same name
 try:
-	import httplib2 as http_client_lib
-	Http = http_client_lib.Http
-	HttpException = http_client_lib.HttpLib2Error
 	import urllib2 as http_client_lib
         HttpException = (http_client_lib.URLError, http_client_lib.HTTPError)
         class Http(): # wrapper to use when httplib2 not available
@@ -23,12 +20,9 @@ try:
                         return f.info(), f.read()
 
 except ImportError:
-	import urllib2 as http_client_lib
-	HttpException = (http_client_lib.URLError, http_client_lib.HTTPError)
-	class Http(): # wrapper to use when httplib2 not available
-		def request(self, url, method, body, headers):
-			f = http_client_lib.urlopen(http_client_lib.Request(url, body, headers))
-			return f.info(), f.read()
+	import httplib2 as http_client_lib
+        Http = http_client_lib.Http
+        HttpException = http_client_lib.HttpLib2Error
 
 namespaces = {
 	'env'   :   "http://www.w3.org/2003/05/soap-envelope",
